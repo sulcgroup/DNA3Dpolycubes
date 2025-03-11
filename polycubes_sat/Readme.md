@@ -1,0 +1,2 @@
+Select files from the solve directory of https://github.com/Akodiat/polycubes
+The scripts construct a SAT problem from a topology and set of design constraints (number of colors and species), then solve the problem with an off-the-shelf SAT solver like Glucose or minisat. Once a solution is found the program uses the polycubes cpp program (`../polycubes_cpp`) to test if the solution consistantly forms the desired structure and nothing else.

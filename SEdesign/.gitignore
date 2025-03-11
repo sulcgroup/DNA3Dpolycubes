@@ -1,0 +1,13 @@
+example
+debug
+.vscode
+/se_design/__*
+/se_design/*.pkl
+/se_design/melttemp.py
+*.pkl
+*.txt
+10k_out
+10k_out_bak
+new_10k_out
+*.egg-info
+sticky_end_libraries
