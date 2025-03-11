@@ -1,0 +1,32 @@
+/* laser cutter preview window */
+#lcut-window {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    width: 80%;
+    height: 80%; /* Set a height if needed */
+    background: white;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* Optional shadow for better visibility */
+}
+
+/* laser cut file preview */
+#lcut-preview {
+    overflow-x: scroll;
+    width: 100%;  /* Set width to full width of the parent */
+    height: 60%;  /* Set the height as needed */
+    background-color: #f5f5f5; /* Optional background color */
+    border: 1px solid #ccc;    /* Optional border */
+}
+
+/* Buttons next to each other */
+.lcut-ui-btn {
+    display: inline-block;
+    margin-right: 10px;
+    padding: 10px 20px;
+    border: 1px solid #333;
+    background-color: #f0f0f0;
+    cursor: pointer;
+    width: auto;
+}

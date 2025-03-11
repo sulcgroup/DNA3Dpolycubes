@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Polycube solver, by Joakim Bohlin and Josh Evans</title>
+		<meta charset="utf-8">
+		<base href=".">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+<!--		<link href="css/style.css" rel="stylesheet" type="text/css">-->
+		<link href="css/solve.css" rel="stylesheet" type="text/css">
+		<script type="module" src="./ts/solve/solve.ts"></script>
+
+	</head>
+	<!-- Adapted from https://threejs.org/examples/webgl_interactive_voxelpainter.html-->
+	<body>
+		<div id="modal" class="modal">
+			<div class="modal-content" style="background: none;">
+				<table id="status"></table>
+				<div style="display: flex; justify-content: center;">
+					<button id="stopButton" style="margin-top: 15px;">Stop</button>
+				</div>
+			</div>
+		</div>
+		<canvas id="threeCanvas"></canvas>
+		<div id="info">
+			<h2>Polycube SAT solver</h2>
+			<small>By Joakim Bohlin and Josh Evans</small><br>
+			<p>Click the cube faces to add cubes (shift-click to remove),<br> then click the <b>save</b> button to export the solve specifications.</p>
+			<p>Click the <b>solve</b> button to solve the SAT problem.</p>
+			<img src="ui/download.svg"
+				 class="control_button"
+				 id="download-spec"
+				 height="30"
+				 alt="Download Solve Spec">
+			<input type="file" accept="json" style="display:none;" id="upload-spec">
+			<img src="ui/download.svg"
+				 class="control_button"
+				 id="upload-spec-btn"
+				 height="30"
+				 alt="Upload Solve Spec"
+				style="rotate: 180deg;">
+			<img src="ui/solve.svg"
+				 class="control_button"
+				 id="solveStructure"
+				 height="30"
+				 alt="Solve">
+			<details>
+				<summary>Options</summary>
+				<input type="checkbox" id="stopAtFirstSol" checked>
+				<label for="stopAtFirstSol">Stop at first solution</label><br>
+				<input type="checkbox" id="torsionalPatches" checked>
+				<label for="torsionalPatches">Torsion</label><br>
+				<input type="checkbox" id="allowSelfInteract" checked>
+				<label for="allowSelfInteract">Allow Self-Interacting Particles?</label><br>
+<!--                <input type="checkbox" id="2d" onchange="toggle2DCamera()">-->
+<!--				<label for="2d">2D</label><br>-->
+				<fieldset>
+					<legend>Solve Details</legend>
+					<input type="checkbox" id="explicitNcNs"><label for="explicitNcNs">Override N<sub>c</sub> &amp; N<sub>s</sub></label><br>
+					<input id="minNc" type="number" min="1" value="1"> ≤ N<sub>c</sub> ≤ <input id="maxNc" type="number" value="-1"><br>
+					<input id="minNt" type="number" min="1" value="1"> ≤ N<sub>s</sub> ≤ <input id="maxNt" type="number" value="-1"><br>
+					<label for="concurrency">Solve Concurrency: </label> <input id="concurrency" type="number" min="1" value="4"><br>
+					<label for="nTries">Max. Alt. Tries: </label><input id="nTries" type="number" min="1" value="10"><br>
+				</fieldset>
+			</details>
+			<details>
+				<summary>Connections</summary>
+				<p>Control-click once on a surface and then again on another surface<br> to make a connection. Connections with
+				the <img src="ui/warning.svg" alt="Warning!" style='height:14px;'> label will break crystalization.<br>
+				<span id="willcrystal"></span></p>
+				<div id="connections">
+				</div>
+			</details>
+			<details>
+				<summary>Crystal Maker</summary>
+				<p>Erase existing model and generate a crystal with the specified unit cell size.</p>
+				<label for="crystalX">Width</label><input id="crystalX" type="number" min="2" ><br>
+				<label for="crystalY">Height</label><input id="crystalY" type="number" min="2" ><br>
+				<label for="crystalZ">Depth</label><input id="crystalZ" type="number" min="2" ><br>
+				<button id="generate-crystal">Generate Crystal</button>
+			</details>
+			<details>
+				<summary>Nanoparticles</summary>
+				<p>Select a nanoparticle type and alt-click to specify that a cube contain it.</p>
+				<div id="nanoparticles">
+					<label for="np-none">None</label><input name='nptype' type="radio" id="nanoparticle-select-none" checked="checked">
+				</div>
+				<button id="addTypeBtn">Add Type</button>
+			</details>
+		</div>
+	</body>
+</html>

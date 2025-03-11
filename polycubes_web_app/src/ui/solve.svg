@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
+              "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="0.853333in" height="0.853333in"
+     viewBox="0 0 256 256">
+     <g transform="scale(0.7) translate(40,16)">
+          <path d="M 40 18 h -20 v 192 h 20" stroke="black" stroke-width="6" fill="none"/>
+          <path d="M 212 18 h 20 v 192 h -20" stroke="black" stroke-width="6" fill="none"/>
+          <text x="8" y="16" transform="scale(6)">1</text>
+          <text x="28" y="16" transform="scale(6)">0</text>
+          <text x="8" y="30" transform="scale(6)">0</text>
+          <text x="28" y="30" transform="scale(6)">1</text>
+     </g>
+     <text x="2" y="36" transform="scale(6.5)">Solve</text>
+</svg>

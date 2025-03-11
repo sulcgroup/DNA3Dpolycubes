@@ -1,0 +1,46 @@
+{
+  "name": "polycubes",
+  "version": "0.2.0",
+  "description": "A stochastic assembler for a cubic lattice particle model",
+  "scripts": {
+    "start": "npx tsc && parcel src/index.html --no-cache --dist-dir ../",
+    "build": "npx tsc && parcel build src/index.html --no-cache --dist-dir ../ --public-url '/polycubes-clone/'",
+    "start-solve": "npx tsc && parcel src/solve.html --no-cache --dist-dir ../",
+    "build-solve": "npx tsc && parcel build src/solve.html --no-cache --dist-dir ../ --public-url '/polycubes-clone/'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sulcgroup/polycubes-clone.git"
+  },
+  "author": "Joshua Evans",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sulcgroup/polycubes-clone/issues"
+  },
+  "homepage": "https://github.com/sulcgroup/polycubes-clone#readme",
+  "devDependencies": {
+    "@types/file-saver": "^2.0.7",
+    "@types/jquery": "^3.5.29",
+    "@types/seedrandom": "^3.0.2",
+    "@types/three": "^0.147.0",
+    "buffer": "^6.0.3",
+    "http-server": "^14.1.1",
+    "parcel": "^2.11.0",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "@svgdotjs/svg.js": "^3.2.0",
+    "chance": "^1.1.11",
+    "cytoscape": "^3.28.1",
+    "file-saver": "^2.0.5",
+    "jquery": "^3.7.1",
+    "jszip": "^3.10.1",
+    "logic": "^0.0.3",
+    "logic-solver": "^2.0.1",
+    "queue-typescript": "^1.0.1",
+    "seedrandom": "3.0.5",
+    "three": "^0.147.0",
+    "three-orbit-controls": "^82.1.0",
+    "webgl": "^0.0.7"
+  }
+}

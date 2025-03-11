@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
+              "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1.70667in" height="1.70667in"
+     viewBox="0 0 512 512">
+  <path fill="none" stroke="black" stroke-width="12"
+        d="M 119 312
+           L 448 217
+           L 99 121
+           L 414 328
+           L 358 355
+           L 210 115 Z"/>
+  <path fill="none" stroke="black" stroke-width="12"
+        d="M 448 217
+           L 414 328"/>
+  <path fill="none" stroke="black" stroke-width="12"
+        d="M 119 313
+           L 358 355"/>
+  <path fill="none" stroke="black" stroke-width="12"
+        d="M 99 121
+           L 119 312"/>
+  <path fill="none" stroke="black" stroke-width="12"
+        d="M 99 121
+           L 210 115"/>
+  <circle cx="119" cy="312" r="30" />
+  <circle cx="448" cy="217" r="30" />
+  <circle cx="99" cy="121" r="30" />
+  <circle cx="414" cy="328" r="30" />
+  <circle cx="358" cy="355" r="30" />
+  <circle cx="210" cy="115" r="30" />
+  <g transform="scale(1.125, .9) translate(96, 310)">
+    <path d="M 48,28 l 100,100 l -100,100 Z" fill="black" transform="rotate(90,128,128) translate(72,0)"/>
+    <rect x="108" width="40" y="72" height="64"/>
+    <rect x="33" width="190" y="210" height="28"/>
+  </g>
+</svg>

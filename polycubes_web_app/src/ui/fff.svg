@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
+              "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="0.853333in" height="0.853333in"
+     viewBox="0 0 256 256">
+    <path d="M 90,28 l 100,100 l -100,100 Z" fill="black"/> 
+    <path d="M 150,28 l 100,100 l -100,100 Z" fill="black"/> 
+    <rect x="10" y="96" width="90" height="64" fill="black"/>
+</svg>

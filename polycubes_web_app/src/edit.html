@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Polycubes</title>
+    <meta charset="utf-8">
+    <meta name="viewport"
+        content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        canvas {
+            position: fixed;
+            height: 100%;
+        }
+
+        #info {
+            position: fixed;
+            margin: 10px;
+            z-index: 1;
+            background-color: white;
+            overflow-y: auto;
+            opacity: 0.6;
+            max-height: 100%;
+            width: 180px;
+            font-family: Monospace;
+            font-size: 12px;
+            text-align: center;
+        }
+        .rot0 {transform: rotate(0deg);}
+        .rot1 {transform: rotate(90deg);}
+        .rot2 {transform: rotate(180deg);}
+        .rot3 {transform: rotate(270deg);}
+
+        fieldset {
+            padding: 0px;
+            margin: 3px;
+            border-width: thick;
+            border-style: solid;
+            border-radius: 5px;
+        }
+
+        a {
+            color: #20ccf0;
+        }
+
+        span {
+           display: inline-block;
+        }
+
+        input[type=number] {
+            width: 30px;
+            height: 30px;
+            text-align: center;
+            border-width:0px;
+            border:none;
+            background: transparent;
+            vertical-align: middle;
+        }
+        button {
+            width: 100%;
+            border: 0;
+            margin: 3px;
+        }
+
+        .primary {
+            background-color: #d6eed6;
+            padding: 5px;
+        }
+    </style>
+    <link rel="manifest" href="/manifest.json">
+</head>
+
+<body>
+    <div id="info">
+        Polycubes, by Joakim Bohlin. A 3D version of <a href="http://chaoticsymmetry.co.uk/polyominoes/index-old.php">Polyominoes</a><br>
+        <fieldset>
+        <legend>Rule set:</legend>
+        <div id="ruleset" style="overflow: hidden"></div>
+        <input type="checkbox" id="autoUpdate" checked="True", onchange="regenerate(); render();">Auto update
+        <button id="hideToggle" onclick="toggleRuleSet()">Hide</button>
+        <!--https://stackoverflow.com/a/19965480 location.search-->
+        </fieldset>
+    </div>
+    <canvas id="threeCanvas"></canvas>
+
+    <script src="src/js/libs/three.min.js"></script>
+    <script src="src/js/libs/randomColor.min.js"></script> <!--from: https://github.com/davidmerfield/randomColor-->
+    <script src="src/js/libs/WebGL.js"></script>
+    <script src="src/js/libs/GLTFExporter.js"></script>
+    <script src="src/js/controls/OrbitControls.ts"></script>
+    <script src="js/system.js"></script>
+    <script src="src/js/view.ts"></script>
+    <script src="src/js/edit.ts"></script>
+
+</body>
+
+</html>

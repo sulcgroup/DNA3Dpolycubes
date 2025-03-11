@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Klossar</title>
+    <meta charset="utf-8">
+    <meta name="viewport"
+        content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        #patchView {
+            position: relative; width: 100%; height: 300px;
+        }
+
+        #threeCanvas {
+            position: fixed;
+            height: 100%;
+        }
+
+        #info {
+            position: fixed;
+            margin: 10px;
+            z-index: 1;
+            background-color: white;
+            overflow-y: auto;
+            overflow-x: hidden;
+            opacity: 0.8;
+            max-height: 100%;
+            width: min-content;
+            font-family: Monospace;
+            font-size: 12px;
+            text-align: center;
+        }
+        .rot0 {transform: rotate(0deg);}
+        .rot1 {transform: rotate(90deg);}
+        .rot2 {transform: rotate(180deg);}
+        .rot3 {transform: rotate(270deg);}
+
+        .modal {
+            position: fixed;
+            z-index: 2;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transform: scale(1.1);
+            transition: visibility 0s linear 0.25s, opacity 0.25s 0s, transform 0.25s;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 1rem 1rem;
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 0.5rem;
+            overflow-y: auto;
+        }
+
+        .show-modal {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1.0);
+            transition: visibility 0s linear 0s, opacity 0.25s 0s, transform 0.25s;
+        }
+
+        fieldset {
+            padding: 0px;
+            margin: 3px;
+            border-width: thick;
+            border-style: solid;
+            border-radius: 5px;
+        }
+
+        a {
+            color: #2d889b;
+        }
+
+        span {
+           display: flex;
+        }
+
+        input[type=number] {
+            width: 4em;
+            height: 30px;
+            text-align: center;
+            border-width:0px;
+            border:none;
+            vertical-align: middle;
+        }
+        button {
+            background-color: #e1e3e1;
+            vertical-align: middle;
+            text-align: center;
+            width: 100%;
+            border: 0;
+            padding: 2px;
+            margin: 1px;
+        }
+
+        .primary {
+            background-color: #d6eed6;
+            padding: 5px;
+        }
+    </style>
+    <link rel="manifest" href="/manifest.json">
+</head>
+
+<body>
+    <div id="examples" class="modal" onclick="toggleModal(this.id)">
+        <div class="modal-content">
+            <h3>Examples</h3>
+                <a href="./klossar?rule=[[[1,-0.5,0,0,0,0,0.7010573846499779,0.7010573846499779],[2,0.5,0,0,0.7010573846499779,0.7010573846499779,0,0],[3,0,-1,0,0,0,-1,0]],[[-2,-0.5,0,0,0.6830127018922194,-0.6830127018922194,0.18301270189221933,-0.18301270189221933],[-1,0.5,0,0,-0.18301270189221924,0.18301270189221933,-0.6830127018922194,0.6830127018922194],[-3,0,2,0,0,0,0,1]]]">Barrel</a>,
+                <a href="./klossar?hexRule=040000000000840000000000">Dimer</a>,
+                <a href="./klossar?hexRule=040087000000">Square</a>,
+                <a href="./klossar?hexRule=040803000000888403000000">Linear chain</a>,
+                <a href="./klossar?rule=[[[1,0,0.866,0,0,0,0,1],[1,0.5,0,0,0,0,0.8660264509800905,-0.5],[1,-0.5,0,0,0,0,0.8660253514245563,0.5]],[[-1,1,0,0,0.7071067811865476,0.7071067811865475,0,0],[-1,-1,0,0,0.7071067811865476,-0.7071067811865475,0,0]]]">2D plane (hexagonal)</a>,
+                <a href="./klossar?rule=[[[1,1,0,0,0,0,-0.5877852522924731,0.8090169943749475],[-1,0.5,-0.5,0,-1,0,0,0]]]">Shuriken</a>,
+                <a href="./klossar?rule=[[[1,1,0,0,1,1,-0,0],[2,0,1,0,0,-1,0,1],[3,0,0,1,1,0,0,1]],[[-1,-1,0,0,-1,1,0,0],[-2,0,-1,0,-1,0,1,0],[-3,0,0,-1,-0,1,-1,0]]]">Cube</a>,
+                <a href="./klossar?hexRule=0406008800008400140000008c0800000000901400000000980c171710129c1a0000000094000000000016141c000000">Robot</a>,
+                <a href="./klossar?hexRule=00000006008b00008600000c000000028c00080c0c000c0c048600000000">Giraffe-duck</a>,
+                <a href="./klossar?hexRule=980e1b0c0c1b020c0c01008d">64-mer</a>,
+                <a href="./klossar?hexRule=070000008900080100008500">Helix</a>
+        </div>
+    </div>
+
+
+    <div id="info">
+        Klossar, by Joakim Bohlin. A generalised version of <a href="">Polycubes</a><br>
+        <button class="primary" onclick="toggleModal('examples')">Help</button>
+        <button onclick="system.resetRandom(); clearRules();">Random input</button>
+        <button onclick="system.resetRule(parseHexRule(mutateRule(polycubeSystem.getRuleStr()))); clearRules()">Mutate input</button>
+        <button onclick="simplifyRule()">Simplify</button>
+        <label for="patchselect">Patch orientation type:</label>
+        <select name="patchselect" id="patchselect" onchange="clearRules()">
+          <option value="quaternion">Quaternion</option>
+          <option value="euler">Euler angles</option>
+          <option value="vector">Unit vectors</option>
+        </select> 
+        <fieldset>
+            <legend>Input:</legend>
+            <div id="ruleset" style="overflow: hidden"></div>
+            <button class="primary" onclick="addSpecies()">Add species</button>
+            <span style="display: flex;">
+                <button onclick="system.regenerate()">Update</button>
+                <input type="checkbox" id="autoUpdate" checked="True", onchange="system.regenerate()">Auto update
+            </span>
+            <button id="hideToggle" onclick="toggleRuleSet()">Hide</button>
+        </fieldset>
+    </div>
+    <canvas id="threeCanvas" tabindex="-1" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);"></canvas>
+
+    <script src="src/js/libs/three.min.js"></script>
+    <script src="src/js/libs/math/ConvexHull.js"></script>
+    <script src="src/js/libs/geometries/ConvexGeometry.js"></script>
+    <script src="src/js/libs/randomColor.min.js"></script> <!--from: https://github.com/davidmerfield/randomColor-->
+    <script src="src/js/libs/WebGL.js"></script>
+    <script src="src/js/libs/GLTFExporter.js"></script>
+    <script src="src/js/controls/OrbitControls.ts"></script>
+    <script src="src/js/controls/TransformControls.ts"></script>
+    <script src="src/js/utils.ts"></script>
+    <script src="src/js/klossSystem.ts.nope"></script>
+    <script src="src/js/view.ts"></script>
+    <script src="src/js/init.ts"></script>
+    <script>
+        createKlossSystem();
+    </script>
+    <script src="src/js/edit.ts"></script>
+    <script src="src/js/patchEdit.ts"></script>
+    <script>
+        function dropHandler(ev) {
+            console.log('File(s) dropped');
+
+            // Prevent default behavior (Prevent file from being opened)
+            ev.preventDefault();
+
+            let patchFile;
+            let particleFile;
+
+            if (ev.dataTransfer.items) {
+                // Use DataTransferItemList interface to access the file(s)
+                for (var i = 0; i < ev.dataTransfer.items.length; i++) {
+                // If dropped items aren't files, reject them
+                if (ev.dataTransfer.items[i].kind === 'file') {
+                    var file = ev.dataTransfer.items[i].getAsFile();
+                    if (file.name.includes('particle')) {
+                        particleFile = file;
+                        console.log("Found a particle file")
+                    } else if (file.name.includes('patch')) {
+                        console.log("Found a patch file")
+                        patchFile = file;
+                    }
+                }
+                }
+            } else {
+                // Use DataTransfer interface to access the file(s)
+                for (var i = 0; i < ev.dataTransfer.files.length; i++) {
+                    if (file.name.includes('particle')) {
+                        console.log("Found a particle file")
+                        particleFile = file;
+                    } else if (file.name.includes('patch')) {
+                        console.log("Found a patch file")
+                        patchFile = file;
+                    }
+                }
+            }
+
+            if (patchFile && particleFile) {
+                readPatchy(particleFile, patchFile)
+            } else {
+                alert("Sorry, I don't know how to handle those files");
+            }
+        }
+        function dragOverHandler(ev) {
+            console.log('File(s) in drop zone');
+
+            // Prevent default behavior (Prevent file from being opened)
+            ev.preventDefault();
+        }
+
+        function readPatchy(particleFile, patchFile) {
+            const particlesReader = new FileReader();
+
+            particlesReader.addEventListener("load", () => {
+                const patchesReader = new FileReader();
+                patchesReader.addEventListener("load", () => {
+                    system.compatibleColors = (c1, c2) => {
+                        if (c1 > 20 && c2 > 20) {
+                            return c1 == -c2;
+                        } else {
+                            return c1 == c2;
+                        }
+                    }
+                    system.resetRule(patchySpecToKloss(
+                        particlesReader.result,
+                        patchesReader.result
+                    ));
+                    clearRules();
+                }, false);
+                patchesReader.readAsText(patchFile);
+            }, false);
+            particlesReader.readAsText(particleFile);
+
+        }
+
+
+    </script>
+
+</body>
+
+</html>

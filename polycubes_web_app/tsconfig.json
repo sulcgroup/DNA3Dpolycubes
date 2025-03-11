@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "module": "es2022",
+    "target": "es2022",
+    "sourceMap": true,
+    "skipLibCheck": true,
+    "moduleResolution": "Node",
+    "lib": [
+      "es2017",
+      "dom",
+      "scripthost"
+//      "webworker"
+    ],
+    "outDir": "src/build",
+    "allowSyntheticDefaultImports": true
+  },
+  "exclude": [
+    "node_modules"
+  ],
+  "include": [
+    "src/ts/*.ts",
+    "src/ts/solve/*.ts",
+    "src/libs/controls/*.ts"
+  ]
+}
