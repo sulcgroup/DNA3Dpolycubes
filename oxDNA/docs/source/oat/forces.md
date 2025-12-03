@@ -1,0 +1,49 @@
+# OAT external force utilities documentation
+
+## Forces
+Python data structures for all forces defined by oxDNA
+
+```{eval-rst}
+.. toctree::
+   :maxdepth: 2
+
+.. currentmodule:: oxDNA_analysis_tools
+
+.. autosummary::
+    :nosignatures:
+
+    external_force_utils.forces.mutual_trap
+    external_force_utils.forces.string
+    external_force_utils.forces.harmonic_trap
+    external_force_utils.forces.rotating_harmonic_trap
+    external_force_utils.forces.repulsion_plane
+    external_force_utils.forces.attraction_plane
+    external_force_utils.forces.repulsion_sphere
+
+.. autofunction:: oxDNA_analysis_tools.external_force_utils.forces.mutual_trap
+.. autofunction:: oxDNA_analysis_tools.external_force_utils.forces.string
+.. autofunction:: oxDNA_analysis_tools.external_force_utils.forces.harmonic_trap
+.. autofunction:: oxDNA_analysis_tools.external_force_utils.forces.rotating_harmonic_trap
+.. autofunction:: oxDNA_analysis_tools.external_force_utils.forces.repulsion_plane
+.. autofunction:: oxDNA_analysis_tools.external_force_utils.forces.attraction_plane
+.. autofunction:: oxDNA_analysis_tools.external_force_utils.forces.repulsion_sphere
+```
+
+## Reader/Writer
+Read and write oxDNA external force files
+
+```{eval-rst}
+.. toctree::
+   :maxdepth: 2
+
+.. currentmodule:: oxDNA_analysis_tools
+
+.. autosummary::
+    :nosignatures:
+
+    external_force_utils.force_reader.read_force_file
+    external_force_utils.force_reader.write_force_file
+
+.. autofunction:: oxDNA_analysis_tools.external_force_utils.force_reader.read_force_file
+.. autofunction:: oxDNA_analysis_tools.external_force_utils.force_reader.write_force_file
+```

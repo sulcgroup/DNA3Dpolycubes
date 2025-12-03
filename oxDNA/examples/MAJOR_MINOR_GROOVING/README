@@ -1,0 +1,17 @@
+|====================|
+|Major Minor Grooving|
+|====================|
+
+This version of the model changes the model DNA duplex so that the major and minor grooves no longer have equal widths, by changing the position of the backbone site for the rigid model nucleotide. 
+
+The change has a few small knock-on effects for the model: the pitch is changed from 10.34 to 10.59; the melting temperatures for short duplexes are increased by a couple of degrees, with the effect becoming smaller with increasing duplex length; there is probably a small effect on hairpin melting. At the time of writing the major minor groove model on svn has not been corrected for any of these changes, so that the only difference with the equal groove width model is the position of the backbones. Ben 26/8/13
+
+Note that configurations more complicated than a duplex will probably die if major minor grooving is switched on after they have been equilibrated with the equal groove model.
+
+oxDNA Input File Option
+=======================
+To enable major minor grooving set
+
+major_minor_grooving = 1
+
+in the input file. It will be off by default. When grooving is switched on, oxDNA should print a notification that major minor grooving will be used to stderr before the simulation starts running.
