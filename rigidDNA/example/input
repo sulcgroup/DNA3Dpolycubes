@@ -1,0 +1,17 @@
+######## Simulation parameters ########
+interaction_type=rigidDNA
+steps=100000
+dt=0.005
+backend=CPU
+
+######## Forcefield parameters ########
+r0=2
+k=1
+b=0.2
+repulsion=20000
+repulsion_offset=0
+
+######## File IO ########
+last_conf=last_conf.dat
+topology=output.top
+conf_file=output.dat
