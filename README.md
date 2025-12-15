@@ -8,7 +8,7 @@ The [Polycube C++ stochastic lattice](https://github.com/sulcgroup/DNA3Dpolycube
 The [generator](https://github.com/sulcgroup/DNA3Dpolycubes/tree/main/polycubes_sat) of SAT formulation of the polycube design
 
 ## Polycubes web app
-The [Polycubes web application](https://github.com/sulcgroup/DNA3Dpolycubes/tree/main/polycubes_web_app) is a graphic user interface for design and assembly of polycubes structures. 
+The [Polycubes web application](https://github.com/sulcgroup/DNA3Dpolycubes/tree/main/polycubes_web_app) is a graphic user interface for design and assembly of polycubes structures and run their stochastic assembly algorithm in JavaScript.
 
 ## Sequence design algorithm
 The [sticky end design algorithm](https://github.com/sulcgroup/DNA3Dpolycubes/tree/main/SEdesign) that designs orthogonal DNA interaction intefaces on DNA cube blocks.
