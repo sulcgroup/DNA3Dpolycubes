@@ -1,8 +1,8 @@
-# NOTE: This is a copy of the `cpp` direcory in Joakim Bohlin's Polycubes git repository, current as of commit `01e8f89a7a9fc6b34d990683b033ccdc8cd12041`
+
 
 # C++ implementation of polycubes
 The Eigen and HDF5 libraries are required to compile the C++ binary. The python binding requires Eigen and the pybind library.
-
+It is forked from Joakim Bohlin's [repository](https://github.com/Akodiat/polycubes/tree/master/cpp), commit 01e8f89a7a9fc6b34d990683b033ccdc8cd12041. It is used to stochastic lattice simulation in cases where the Javascript-based web app is too slow.
 ## Install dependencies:
 ```bash
 conda install -c conda-forge pybind11 eigen

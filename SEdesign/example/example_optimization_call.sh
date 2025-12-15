@@ -1,0 +1,11 @@
+python ../se_design/orthogonal_seq_screen_parallel.py \
+	--candidate_sequences_file input_seqs.txt \
+	--output_sequences_file output_pairs.txt \
+	--num_seq_output 8 \
+	--optimization_steps 20000 \
+	--celsius 15 \
+	--spacer TTTTTTTTTTTT \
+	--sequence_constraint_file constraint_seqs.txt \
+	--dG_file saved_nupack_dGs_0.pkl \
+	--filter_struct 0 \
+	--force_overwrite \
