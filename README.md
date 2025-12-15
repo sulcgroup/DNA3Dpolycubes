@@ -10,7 +10,7 @@ The [generator](https://github.com/sulcgroup/DNA3Dpolycubes/tree/main/polycubes_
 ## Polycubes web app
 The [Polycubes web application](https://github.com/sulcgroup/DNA3Dpolycubes/tree/main/polycubes_web_app) is a graphic user interface for design and assembly of polycubes structures and run their stochastic assembly algorithm in JavaScript.
 
-## Sequence design algorithm
+## SEDesign: DNA sequence design algorithm
 The [sticky end design algorithm](https://github.com/sulcgroup/DNA3Dpolycubes/tree/main/SEdesign) that designs orthogonal DNA interaction intefaces on DNA cube blocks.
 
 ## RigidDNA
