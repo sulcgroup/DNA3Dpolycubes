@@ -196,9 +196,6 @@ class BaseParticleSet:
             self.add_particle(particle)
 
     def add_particle(self, particle: PatchyBaseParticleType):
-        # if particle.type_id() is not None and particle.type_id() != -1:
-        #     assert particle.type_id() == self.num_particle_types()
-        # else:
         particle.set_type_id(self.num_particle_types())
         self._particle_types.append(particle)
         for patch in particle.patches():

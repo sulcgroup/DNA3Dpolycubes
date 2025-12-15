@@ -69,7 +69,6 @@ class OrigamiDeabstractor(ABC):  # TODO BETTER NAME
         Combines all structures together into a single DNAStructure
         """
         print("merging the topologies")
-        # return DNAStructure.merge_many(self.get_particles())
         particles = self.get_particles()
         if clusters:
             for p in particles:
@@ -146,8 +145,6 @@ class OrigamiDeabstractor(ABC):  # TODO BETTER NAME
         for i, particle in enumerate(particles):
             # clone dna particle
             origami = self.get_dna_origami(particle).clone(copy_uuids=False)
-            # origami: DNAParticle = deepcopy(self.get_dna_origami(particle))
-            # origami: DNAParticle = self.get_dna_origami(particle).clone()
             print(f"{i}/{pl}", end="\r")
             assert origami.linked_particle.matches(particle)
             # align dna particle with patchy
@@ -160,6 +157,10 @@ class OrigamiDeabstractor(ABC):  # TODO BETTER NAME
             # we finished the positioning
             self.dna_particles[particle.get_uid()] = origami
         print()
+
+    @abstractmethod
+    def get_scale_factor(self) -> float:
+        pass
 
     def get_particles(self) -> list[DNAParticle]:
         """
@@ -185,9 +186,6 @@ class OrigamiDeabstractor(ABC):  # TODO BETTER NAME
 
     def dump_monomer(self, ptype: DNAParticle, fp: Path):
         assert ptype.has_linked(), "Cannot dump monomer for unlinked DNA particle"
-        # if np.abs(ptype.linked_particle.rotation() - np.identity(3)).sum() > 1e-6:
-        #     print("Warning: Particle has non-identity rotation! "
-        #           "Patch a1s are going to be messed up! But you can technically proceed")
         cpy = copy.deepcopy(ptype)
         # clone to add strands
         # iter strand id map
@@ -230,6 +228,13 @@ class OrigamiDeabstractor(ABC):  # TODO BETTER NAME
 
     @abstractmethod
     def convert(self, unbound_stickies: bool = True):
+        pass
+
+    @abstractmethod
+    def link_patchy_particle(self, patchy_particle: PLPatchyParticle, dna_particle: DNAParticle):
+        """
+        Links a patchy particle to a dna particle
+        """
         pass
 
     def assign_particles(self,

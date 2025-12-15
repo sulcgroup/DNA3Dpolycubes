@@ -226,8 +226,6 @@ class SlurmLog:
         else:  # *sigh*
             self.log_list.insert(self.idx_end(e.job_submit_date) + 1, e)
 
-        # if we assume linear tim
-
     def __len__(self):
         """
         Returns:

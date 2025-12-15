@@ -66,10 +66,8 @@ class PatchyServerConfig:
                 slurm_file.write(f"#SBATCH --{flag_key}=\"{self.slurm_bash_flags[flag_key]}\"\n")
             else:
                 slurm_file.write(f"#SBATCH -{flag_key} {self.slurm_bash_flags[flag_key]}\n")
-        run_oxdna_counter = 1
         slurm_file.write(f"#SBATCH --job-name=\"{job_name}\"\n")
         slurm_file.write(f"#SBATCH -o run%j.out\n")
-        # slurm_file.write(f"#SBATCH -e run{run_oxdna_counter}_%j.err\n")
 
         # slurm includes ("module load xyz" and the like)
         for line in self.slurm_includes:

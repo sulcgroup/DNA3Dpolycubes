@@ -72,12 +72,6 @@ class InteractionMatrix:
     def num_interactions(self) -> int:
         return len(self.__interactions)
 
-    # def is_one_to_one(self) -> bool:
-    #     """
-    #     an interaction matrix is one-to-one if and only if all patch interactions that have a strength
-    #     value are between colors that add to zero
-    #     """
-    #     return all([c1 + c2 == 0 for (c1, c2), strength in self.__interactions.items() if strength])
     def is_one_to_one(self) -> bool:
         """
         correction: an interaction matrix is one-to-one iff every connected component of the interaction
