@@ -1,0 +1,15 @@
+__pycache__
+.idea
+*/.ipynb_checkpoints
+.ipynb_checkpoints
+src/pypatchy/patchy/.ipynb_checkpoints
+pypatchy.egg-info
+build
+dist
+*.so
+docs/_build
+docs/source/_templates
+docs/source/_static
+docs/source/generated
+id_ed25519
+id_ed25519.pub
