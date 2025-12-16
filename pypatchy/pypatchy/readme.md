@@ -153,11 +153,8 @@ This file defines **graph-based representations of molecular structures** for pa
 - `get_nodes_overlap()`: Finds nodes common to all provided cycles
 
 ## Main classes:
-# structure.py - Structure class
-
 This class defines a **graph-based representation of molecular structures** for polycube/lattice-based patchy particle systems.
 
-## Class:
 
 ### **`Structure`**
 Represents molecular structures using NetworkX MultiDiGraph where nodes are particles and edges are directional bonds
@@ -207,46 +204,230 @@ Represents molecular structures using NetworkX MultiDiGraph where nodes are part
 - `__len__()`: Returns number of vertices
 - `__str__()`: Returns formatted string with vertex and binding counts
 
-## Notes:
+### **`FiniteLatticeStructure`** (extends `Structure`)
+Structure subclass optimized for finite lattice structures with efficient coordinate-based lookups
 
-- Contains several commented-out lines that can be deleted (lines 13, 24, 70, 181)
-- Docstring references external documentation URL
-- Many methods note ChatGPT assistance in their implementation
+**Private attributes:**
+- `__cube_positions`: N×3 NumPy array of particle positions (cached from `matrix()`)
+- `__cube_index_map`: Dict mapping position byte representations to vertex indices for O(1) lookup
 
-### 2. **`TypedStructure`** (ABC, extends `Structure`)
-Abstract class for structures where particles have types
+**Methods:**
 
-**Abstract methods:**
-- `particle_type()`: Returns type ID for a particle
-- `set_particle_types()`: Updates particle type assignments
+- `__init__()`: Calls parent constructor, then computes and caches cube positions and builds position-to-index mapping
 
-### 3. **`GenericTypedStructure`** (extends `TypedStructure`)
-Concrete implementation with dictionary-based particle typing
+- `cube()`: Returns position vector (NumPy array) for vertex at given index
 
-**Key attributes:**
-- `particle_types`: Dict mapping vertex IDs to particle type IDs
+- `cube_idx()`: Returns vertex index for given position coordinates (uses byte representation for dict lookup)
 
-**Key methods:**
-- `particle_type()`: Returns type for a given particle ID
-- `set_particle_types()`: Updates particle type mappings
-- `remap_vert_ids()`: Reassigns vertex IDs to avoid collisions, returns homomorphism
-- `get_particle_types()`: Returns the particle types dictionary
-- `num_particle_types()`: Counts distinct particle types
-- `substructures()` / `substructure()`: Return typed substructures
-- `iter_components()`: Generator yielding connected components as typed structures
-- `splice()`: Merges structures while preserving particle types
-- `rotate()`: Abstract method (pass statement only)
-- `slice()`: Extracts edges orthogonal to specified axis
-- `to_igraph()`: Converts to igraph format with type vertex attributes
+- `positions_connected()`: Overrides parent method to accept either vertex indices or position vectors (np.ndarray), converts positions to indices before checking connectivity
 
-### 4. **`StructuralHomomorphism`**
-Represents a mapping between two structures, preserving bindings
+### **`StructuralMapping`**
+Base class for mappings between vertex locations in source and target structures (written with ChatGPT assistance)
 
 **Attributes:**
-- `source`: Source Structure
-- `target`: Target Structure
-- `mapping`: Dict mapping source vertex IDs to target vertex IDs
-- 
+- `source`: Source Structure that mapping maps from
+- `target`: Target Structure that mapping maps onto
+- `lmap`: Dict mapping source vertex indices to target vertex indices
+- `rlmap`: Dict mapping target vertex indices back to source vertex indices (reverse map)
+
+**Methods:**
+
+- `__init__()`: Initialize with source/target structures and location mapping
+  - `reverse_location_mapping` is optional; if None, automatically computed by inverting `location_mapping`
+
+- `map_location()`: Maps source vertex index to target vertex index (with assertion check)
+
+- `rmap_location()`: Maps target vertex index back to source vertex index (with assertion check)
+
+- `as_pairs()`: Returns mapping as list of `(source_idx, target_idx)` tuples
+
+- `__len__()`: Returns number of mapped locations
+
+- `__getitem__()`: Access target index using `mapping[source_idx]` syntax
+
+- `__contains__()`: Check if source vertex index is in mapping
+
+### **`StructuralHomomorphism`** (extends `StructuralMapping`)
+Structural mapping that includes both location mapping and rotation/direction mapping
+
+**Additional attributes:**
+- `_rmapidx`: Index in `enumerateRotations()` dictionary identifying the rotation mapping
+
+**Methods:**
+
+- `__init__()`: Initialize with source/target structures, rotation mapping index, and location mappings
+
+- `map_direction()`: Maps source direction index to target direction index using rotation mapping
+  - Accepts int or np.ndarray (converts array to direction index first)
+  - Asserts direction is valid (0 ≤ d < len(RULE_ORDER))
+
+- `rmap_direction()`: Reverse maps target direction back to source direction
+  - Searches rotation mapping for matching direction
+  - Raises exception if direction not found
+
+- `as_transform()`: Computes rotation matrix and translation vector between structures
+  - Aligns source and target coordinate matrices according to location mapping
+  - Uses SVD superposition to find optimal transformation
+  - Asserts RMS error < 1e-8
+  - Returns rounded rotation matrix and translation vector as tuple
+
+- `contains_edge()`: Checks if source has edge corresponding to given target vertex and direction
+  - Maps target vertex/direction back to source and checks edge existence
+
+- `target_contains_edge()`: Checks if target has edge corresponding to given source vertex and direction
+  - Maps source vertex/direction to target and checks edge existence
+
+- `apply_to()`: Applies homomorphism to a collection of bindings
+  - Maps both vertex indices and direction indices from source to target
+  - Returns list of transformed bindings
+
+### **`Tiling`**
+Handles periodic tiling of crystal structures across multiple dimensions
+
+**Attributes:**
+- `source_structure`: Original Structure to be tiled
+- `tiled_structure`: Resulting tiled Structure
+- `periodic_bindings`: List of bindings that cross periodic boundaries
+- `vertex_mapping`: Dict mapping source vertex IDs to sets of corresponding tiled vertex IDs
+
+**Methods:**
+
+- `__init__()`: Creates tiled structure from source
+  - **Parameters:**
+    - `source_structure`: Structure to tile (must be crystal and euclidian)
+    - `periodic_bindings`: Bindings that wrap around periodic boundaries
+    - `dimensional_tiling_counts`: Tuple specifying number of tiles per dimension (up to 3D)
+  - **Validates:**
+    - Source structure is euclidian (proper directional bindings)
+    - Source structure is crystal (no single-axis cycles)
+    - Dimensions ≤ 3
+  - **Process:**
+    - Deep copies source structure
+    - Iterates through dimensions, tiling each with count ≥ 2
+    - Updates periodic bindings during tiling
+  - **Post-construction assertions:**
+    - All vertices have degree ≤ 6
+    - All periodic bindings exist in tiled structure
+    - Result is still crystal and euclidian
+
+- `__tile_single_dimension()`: Internal recursive method for tiling along one dimension
+  - **Parameters:**
+    - `monomer`: Structure to tile (modified during recursion)
+    - `number_of_tilings`: Number of copies along this dimension
+    - `dimensional_bindings`: Bindings along this dimension's axes
+  - **Base case (n=2):**
+    - Remaps monomer vertex IDs to avoid conflicts
+    - Splices original with remapped copy
+    - Creates new periodic bindings at boundary
+  - **Recursive case (n>2):**
+    - Recursively tiles to n-1 copies
+    - Remaps additional monomer copy
+    - Splices onto existing tiled structure
+    - Updates periodic bindings
+  - **Returns:** List of new extra bindings created
+  - **Validates:**
+    - Binding count matches expected formula
+    - All extra bindings exist in result
+    - Result maintains euclidian property
+
+**Design notes**
+
+- Uses recursive approach to build up tiling dimension by dimension
+- Maintains periodic boundary conditions through `periodic_bindings` tracking
+- Remaps vertex IDs at each step to avoid conflicts
+- Extensive assertions validate structural integrity at each step
+
+### **`TypedStructure`** (extends `Structure`, ABC)
+Abstract base class for structures where particles have defined types
+
+**Abstract methods (must be implemented by subclasses):**
+- `particle_type()`: Returns type ID for a given particle ID
+- `get_particle_types()`: Returns dict mapping particle IDs to type IDs
+- `num_particle_types()`: Returns count of distinct particle types
+
+**Overridden methods:**
+- `_candidate_homomorphisms()`: Extends parent's homomorphism search with particle type constraints
+  - Adds vertex compatibility function that checks matching particle types
+  - Uses igraph's VF2 algorithm with both node and edge compatibility functions
+- `draw()`: Visualizes structure with color-coded particle types
+  - Uses matplotlib's TABLEAU_COLORS for up to 10 different types
+  - Colors nodes by particle type
+  - Shows edges with direction indices and arrows
+  - Raises ValueError if too many particle types for available colors
+- `to_igraph()`: Extends parent's conversion to include particle types
+  - Calls parent's `to_igraph()` method
+  - Adds 'type' attribute to vertices from `particle_type()` calls
+  - Returns cached result
+
+**Additional methods:**
+
+- `is_symmetric()`: Checks rotational symmetry around specified axis
+  - Filters bindings not along the axis
+  - Tests rotations (appears incomplete - returns True unconditionally)
+  - Has TODO for C++ implementation
+- `matrix_etc()`: Returns positions, UIDs, and particle types as separate arrays
+  - Extends `matrix()` functionality
+  - Returns tuple of (positions array, UIDs array, types array)
+  - Positions sorted by x-coordinate
+  - All arrays validated to have correct length
+
+**Design notes**
+
+- Adds type information to base Structure graph representation
+- Type constraints improve homomorphism matching accuracy
+- Color-coded visualization helps distinguish particle types
+- `is_symmetric()` method appears incomplete (always returns True)
+
+# structure.py - GenericTypedStructure class
+
+## Class:
+
+### **`GenericTypedStructure`** (extends `TypedStructure`)
+Concrete implementation of TypedStructure using dictionary-based particle typing
+
+**Attributes:**
+- `particle_types`: Dict mapping vertex IDs to particle type IDs
+
+**Methods:**
+- `__init__()`: Initialize with optional type information
+  - Accepts `types` kwarg: explicit dict of particle types
+  - Accepts `fill_type` kwarg: default type for unspecified particles
+  - Asserts all vertices have assigned types after initialization
+- `particle_type()`: Returns type ID for given particle ID (simple dict lookup)
+- `set_particle_types()`: Updates particle types
+  - Asserts all keys exist in current particle_types
+  - Updates using dict.update()
+- `remap_vert_ids()`: Remaps vertex IDs to avoid collisions (written by ChatGPT)
+  - Finds new IDs not in `verts_to_avoid`
+  - Remaps both bindings and particle types
+  - Returns StructuralHomomorphism with identity rotation (index 0)
+- `get_particle_types()`: Returns particle types dict
+- `num_particle_types()`: Returns count of unique type values
+- `substructures()`: Generator yielding typed substructures
+  - Calls parent's substructures()
+  - Wraps each in GenericTypedStructure with filtered types
+- `substructure()`: Returns typed substructure for given nodes
+  - Calls parent's substructure()
+  - Wraps result with filtered particle types
+- `iter_components()`: Generator yielding connected components as typed structures
+  - Uses NetworkX connected_components on undirected graph
+  - Each component returned as GenericTypedStructure with appropriate types
+- `__str__()`: Returns string showing bindings and particle types
+- `splice()`: Splices another typed structure (written by ChatGPT)
+  - Remaps other's vertex IDs to avoid conflicts
+  - Calls parent splice() for bindings
+  - Merges particle type dicts (self's types + remapped other's types)
+  - Returns new GenericTypedStructure
+- `rotate()`: Empty implementation (just `pass`)
+- `slice()`: Returns structure with edges orthogonal to specified axis
+  - Filters out bindings along the axis
+  - Preserves all particle types
+
+## Design notes:
+
+- Simple dict-based implementation suitable for most use cases
+- Maintains particle types through all structural operations
+- `rotate()` is not implemented (just contains `pass`)
 
 ## Module-level functions:
 
@@ -262,8 +443,6 @@ Represents a mapping between two structures, preserving bindings
 # origami_deabstractor.py
 
 This file defines an **abstract base class for converting coarse-grained patchy particle simulations into detailed DNA origami structures**.
-
-## Class:
 
 ### **`OrigamiDeabstractor`** (ABC)
 Handles conversion from abstract patchy particle representations to nucleotide-level DNA structures
@@ -282,40 +461,28 @@ Handles conversion from abstract patchy particle representations to nucleotide-l
 **Methods:**
 
 - `__init__()`: Initialize with optional sticky_length, spacer_length, and expected_num_edges
-
 - `set_track_conf_stickies()` / `is_track_conf_stickies()`: Enable/disable and check sticky end tracking
-
 - `get_dna_origami()`: Get DNA particle template for a patchy particle type (accepts type ID, name, or particle object)
-
 - `get_full_conf()`: Merges all DNA particles into single DNAStructure, optionally clearing clusters
-
 - `get_sticky_length()`: Returns sticky length (hardcoded value or average of assigned sequences)
-
 - `color_sequence()`: Gets/generates DNA sequence for a color
   - If color exists: returns stored sequence
   - If matching color exists: returns reverse complement
   - Otherwise: generates random sequence
-
 - `get_color_match()`: Returns complementary color
   - For strings: "dark" prefix toggle (e.g., "darkred" ↔ "red")
   - For ints: negation (e.g., 5 ↔ -5)
   - Respects `color_match_overrides` dict
-
 - `ready_to_position()`: Checks if all particle types have DNA mappings
-
 - `position_particles()`: Clones DNA templates, aligns with patchy particles, applies scale factor and positions
-
 - `get_particles()`: Returns list of positioned DNA particles (calls `position_particles()` if needed)
-
 - `get_dna_particle()`: Gets positioned DNA particle for a specific patchy particle instance
-
 - `dump_monomer()`: Exports single DNA particle type to .top and .dat files with sticky ends added
-
 - `dump_monomers()`: Exports all particle types to separate files, optionally filtering to only types present in scene
-
 - `convert()`: Abstract method for subclasses to implement conversion logic
-
 - `assign_particles()`: Assigns DNA particle template(s) to patchy particle type(s), calls `link_patchy_particle()`
+
+---
 
 # patchy_base_particle.py
 
@@ -399,6 +566,8 @@ Abstract base class for particle instances in simulation
 - Design uses type-instance pattern: types are templates, instances are actual particles in simulation
 - Heavy use of abstract methods allows different simulation backends to implement specific behaviors
 
+---
+
 # scene.py
 
 This file defines an **abstract base class for simulation scenes** that manage collections of particle instances and their interactions.
@@ -447,6 +616,8 @@ Abstract container for particle instances in a simulation
 - Provides interface for different simulation backends to implement
 - Manages particle instances while delegating type management to subclasses
 - Bonding/interaction queries are abstract to allow backend-specific implementations
+
+---
 
 # server_config.py
 
@@ -499,6 +670,8 @@ Encapsulates all settings for running simulations on a specific server or cluste
 - `get_slurm_n_tasks()`: Extracts number of tasks from SLURM flags (checks "n" or "ntasks", defaults to 1)
 
 - `to_dict()`: Serializes configuration to dictionary (converts bools explicitly)
+
+---
 
 # slurmlog.py
 
@@ -557,6 +730,8 @@ Wrapper for a sorted list of `SlurmLogEntry` objects with accessor and filter me
 
 - `__repr__()`: String representation with double newlines between entries
 
+---
+
 # slurm_log_entry.py
 
 This file defines **individual SLURM job log entries** and the interface for objects that can be logged.
@@ -604,74 +779,137 @@ Represents a single SLURM job submission with metadata
 - Bridges SLURM job management with simulation tracking
 - Date handling accommodates both programmatic and user input
 
+---
 
-# structure.py
+# util.py  
+General-purpose **stateless utility functions** used throughout the PyPatchy codebase.  
+Includes helpers for vector math, rotations, quaternion operations, color selection, filesystem access, and configuration lookup.
 
-This file defines **graph-based representations of molecular structures** for patchy particle assemblies, particularly for polycube/lattice-based systems.
+The module prioritizes *testability* and *side-effect-free* functionality, with the exception of light interaction with local configuration files.
 
-## Key type definitions:
+## Module-level constants
 
-- `Binding`: Type alias for `tuple[int, int, int, int]` representing (node1, direction1, node2, direction2)
+- `SLURM_JOB_CACHE: dict[int, dict[str, str]]`  
+  Cache for SLURM job metadata.
 
-## Utility functions:
+- `INFO_DIR_NAME`  
+  Name of the hidden directory used for PyPatchy configuration (`~/.pypatchy/`).
 
-- `flip()`: Reverses a binding tuple to swap node perspective
-- `get_nodes_overlap()`: Finds nodes common to all provided cycles
+- `PATCHY_FILE_FORMAT_KEY`, `NUM_TEETH_KEY`, `DENTAL_RADIUS_KEY`  
+  Keys used for internal or forward-compatible metadata.
 
-## Main classes:
+- `EXTERNAL_OBSERVABLES`  
+  Placeholder boolean for future external observable support.
 
-### 1. **`Structure`**
-Base class for molecular structure graphs using NetworkX MultiDiGraph
+## Module-level functions
 
-**Key attributes:**
-- `graph`: NetworkX MultiDiGraph where nodes are particles and edges are bonds with direction indices
+### **`dist(a, b)`**  
+Computes Euclidean distance between two NumPy vectors.
 
-**Key methods:**
-- `bindings_list`: Cached property returning set of unique bindings (each edge appears once despite bidirectional storage)
-- `vertices()`: Returns list of node IDs
-- `filter_edges()`: Returns edges satisfying a predicate function
-- `rotate()`: Applies rotation mapping to structure, returns `StructuralHomomorphism`
-- `num_dimensions()`: Returns 3 (hardcoded for now)
-- `dimension_sizes()`: Computes max length along each dimension for periodic structures
-- `get_empties()`: Returns list of unbound patches (node, direction pairs)
-- `draw()`: Visualizes structure using matplotlib
-- `to_json()`: Serializes bindings list to nested list format
+### **`normalize(v)`**  
+Returns a unit-length version of vector `v`.
 
-(File truncated at line 208 - many additional methods exist but weren't fully visible)
+### **`get_local_dir()`**  
+Returns the base PyPatchy metadata directory (`~/.pypatchy/`).
 
-### 2. **`TypedStructure`** (ABC, extends `Structure`)
-Abstract class for structures where particles have types
+### **`get_input_dir()`**  
+Returns the input subdirectory under the PyPatchy local directory.
 
-**Abstract methods:**
-- `particle_type()`: Returns type ID for a particle
-- `set_particle_types()`: Updates particle type assignments
+### **`lsin()`**  
+Lists all files and folders inside the input directory.
 
-### 3. **`GenericTypedStructure`** (extends `TypedStructure`)
-Concrete implementation with dictionary-based particle typing
+### **`get_output_dir()`**  
+Returns the output subdirectory under the local directory.
 
-**Key attributes:**
-- `particle_types`: Dict mapping vertex IDs to particle type IDs
+### **`get_log_dir()`**  
+Returns the log directory inside the output folder.
 
-**Key methods:**
-- `particle_type()`: Returns type for a given particle ID
-- `set_particle_types()`: Updates particle type mappings
-- `remap_vert_ids()`: Reassigns vertex IDs to avoid collisions, returns homomorphism
-- `get_particle_types()`: Returns the particle types dictionary
-- `num_particle_types()`: Counts distinct particle types
-- `substructures()` / `substructure()`: Return typed substructures
-- `iter_components()`: Generator yielding connected components as typed structures
-- `splice()`: Merges structures while preserving particle types
-- `rotate()`: Abstract method (pass statement only)
-- `slice()`: Extracts edges orthogonal to specified axis
-- `to_igraph()`: Converts to igraph format with type vertex attributes
+### **`simulation_run_dir()`**  
+Returns directory from config under `[ANALYSIS].simulation_data_dir`.
 
-## Module-level functions:
+### **`tlm_data_dir()`**  
+Returns the TLM data directory if defined; otherwise raises `ValueError`.
 
-- `read_topology()`: Loads structure from JSON file with bindings and particle types
-- `calcEmptyFromTop()`: Computes empty patches from binding list
+### **`get_spec_json(name, folder)`**  
+Loads a JSON spec file from  
+`<local_dir>/spec_files/<folder>/<name>.json`.  
+Raises `NoSpecJSONError` on failure.
 
-## Design notes:
+### **`is_sorted(target)`**  
+Checks whether a sequence of integers is strictly increasing.
 
-- Structures use bidirectional edge representation (each bond stored as two directed edges)
-- Direction indices (0-5) represent patches on cubic lattice faces
-- Heavy use of NetworkX for graph algorithms and igraph for advanced analysis
+### **`selectColor(number, saturation=50, value=65, fmt="hex")`**  
+Maps an integer to a visually separable color using the golden angle.  
+Formats supported: `"hsv"`, `"rgb"`, `"hex"`, or raw RGB array.
+
+### **`rotAroundAxis(patchPos, axis, angle)`**  
+Applies a rotation of `angle` radians around the given axis using SciPy.
+
+### **`to_xyz(vector)`**  
+Converts a length-3 vector into a dict `{x, y, z}`.
+
+### **`from_xyz(d)`**  
+Converts a dict to a NumPy 3-vector.
+
+### **`getRotations(ndim=3)`**  
+Returns 2D and (optionally) 3D rotation matrices.
+
+### **`enumerateRotations()`**  
+Returns a mapping of octahedral rotational symmetries as index maps.
+
+### **`rotidx(r)`**  
+Returns the index of a rotation mapping, or `-1` if invalid.
+
+### **`getSignedAngle(v1, v2, axis)`**  
+Computes a signed angular displacement from `v1` to `v2` about an axis.
+
+### **`rotation_from_to(v1, v2)`**  
+Returns a SciPy `Rotation` object that rotates vector `v1` into `v2`.
+
+### **`angle_between(v1, v2)`**  
+Returns the unsigned angle in radians between two vectors.
+
+### **`inverse_quaternion(q)`**  
+Computes the inverse of a quaternion `[w, x, y, z]`.  
+Raises `ValueError` if its norm is zero.
+
+### **`all_equal(iterable)`**  
+Returns `True` if all elements in an iterable are identical.
+
+### **`is_slurm_job()`**  
+Returns `True` if the process is running inside a SLURM job.
+
+### **`halfway_vector(a, b)`**  
+Returns the unit vector halfway between two unit vectors.  
+Handles the case where vectors are opposite.
+
+### **`random_unit_vector()`**  
+Generates a random unit vector in 3-space.
+
+### **`powerset(iterable)`**  
+Generates all subsets of the given iterable.
+
+### **`pairwise(iterable)`**  
+Yields consecutive element pairs: `(s[i], s[i+1])`.
+
+## Classes
+
+### **`NoSpecJSONError`**  
+Exception raised when a spec JSON file is missing.
+
+**Attributes:**
+- `json_name` — expected filename  
+- `folder` — folder searched
+
+**Methods:**
+- `__str__()` — user-friendly error message
+
+### **`BadSimulationDirException`**  
+Raised when a simulation directory path is malformed.
+
+**Attributes:**
+- `p` — the invalid path
+
+**Methods:**
+- `__str__()` — descriptive error message
+

@@ -44,13 +44,6 @@ def get_nodes_overlap(homocycles: list[list[int]]) -> set[int]:
 
 
 class Structure:
-    """
-    A structure is defined in
-    https://paper.dropbox.com/doc/Computational-Design-of-Allostery-ddFV7iLkKaua1tnDZOQFu#:uid=923787386309510691921072&h2=Empirical-Definition-of-a-Comp
-    so go read that
-    """
-
-    # graph
     graph: nx.MultiDiGraph
 
     # TODO: deprecated bindings_list and just use graph instead since it contains the same data
@@ -473,13 +466,6 @@ class Structure:
 
     def __str__(self) -> str:
         return f"Structure with {len(self.vertices())} particles and {len(self.bindings_list)} connections"
-
-    def replace_edges(self, bindings_from: list[Binding], bindings_to: list[Binding]):
-        """
-        in place, replace edges of `bindings_from` with `bindings_to
-        """
-        # fill in
-        pass
 
     def is_crystal(self) -> bool:
         """
