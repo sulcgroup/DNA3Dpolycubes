@@ -54,3 +54,4 @@ Provides a collection of stateless helper functions used throughout the PyPatchy
 Provides a small visualization helper for assigning consistent colors to particle types. Using a golden-angle hue progression, it maps each particle-type index to an RGB value via HSV conversion, ensuring visually distinct yet harmonized colors for plots or renderings of polycube or patchy-particle structures. The module is intentionally minimal but designed to match the color conventions used elsewhere in the codebase.
 
 
+

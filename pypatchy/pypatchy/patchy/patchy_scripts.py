@@ -11,8 +11,7 @@ import numpy as np
 # pypatchy imports
 from .pl.plparticleset import PLParticleSet, MultidentateConvertSettings
 from .pl.patchyio import get_writer, FWriter, LWriter, PLBaseWriter
-from .pl.plpotential import PLFRPatchyPotential, PLFRExclVolPotential, PLLRExclVolPotential, PLLRPatchyPotential, \
-    PLPotential
+from .pl.plpotential import PLLRExclVolPotential, PLPotential
 from .pl.plscene import PLPSimulation
 from ..util import get_input_dir
 
