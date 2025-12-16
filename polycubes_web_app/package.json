@@ -4,7 +4,7 @@
   "description": "A stochastic assembler for a cubic lattice particle model",
   "scripts": {
     "build": "npx tsc && parcel build src/index.html --no-cache --dist-dir ../docs --public-url './'",
-    "build-solve": "npx tsc && parcel build src/solve.html --no-cache --dist-dir ../docs --public-url './solve'"
+    "build-solve": "npx tsc && parcel build src/solve.html --no-cache --dist-dir ../docs --public-url './'"
   },
   "repository": {
     "type": "git",
