@@ -31,5 +31,5 @@ The pypatchy library does not contain a patchy particle model implementation and
 [//]: # (Python script library for manipulation of oxDNA structures. These libraries are required for setting up oxDNA simulations and conversion of simulation-validated  )
 
 
-**Disclaimer**
-This software is provided for educational and research purposes only. It is provided “as is” without any warranty, express or implied. The authors make no guarantees about accuracy, reliability, or suitability for any purpose. Users are responsible for validating results and assume all risks associated with its use. The authors and contributors are not liable for any damages arising from use or misuse of this software.
+
+----
