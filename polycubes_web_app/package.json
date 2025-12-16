@@ -3,10 +3,8 @@
   "version": "0.2.0",
   "description": "A stochastic assembler for a cubic lattice particle model",
   "scripts": {
-    "start": "npx tsc && parcel src/index.html --no-cache --dist-dir ../",
-    "build": "npx tsc && parcel build src/index.html --no-cache --dist-dir ../ --public-url '/polycubes-clone/'",
-    "start-solve": "npx tsc && parcel src/solve.html --no-cache --dist-dir ../",
-    "build-solve": "npx tsc && parcel build src/solve.html --no-cache --dist-dir ../ --public-url '/polycubes-clone/'"
+    "build": "npx tsc && parcel build src/index.html --no-cache --dist-dir deploy --public-url '/DNA3DPolycubes/'",
+    "build-solve": "npx tsc && parcel build src/solve.html --no-cache --dist-dir deploy --public-url '/DNA3DPolycubes/'"
   },
   "repository": {
     "type": "git",
