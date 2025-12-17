@@ -1,6 +1,8 @@
 # DNA3Dpolycubes
 A repository accompanying a manuscript *Universal 3D Nanoscale Assembly with DNA Polycubes*. It contains software tools that are used in the manuscript for design and simulation-driven validation of polycube self-assembled polycube finite-sized as well crystal structures and their subsequent export to DNA strands for experimental realization.  
 
+For a hands-on demonstration, [check out our interactive polycubes web app](https://sulcgroup.github.io/DNA3Dpolycubes/)
+
 ## [Sequence design algorithm](SEdesign/)
 The sticky end design algorithm that designs orthogonal DNA interaction intefaces on DNA cube blocks.
 
