@@ -23,7 +23,7 @@ A more user-friendly Javascript implementation of this is found in the [polycube
 A more detailed and object-oriented implementation of this is integrated into [pypatchy library](pypatchy/design/sat).
 
 ## [Polycubes stochastic assembly web app](polycubes_web_app/)
-The polycubes web application is a graphic user interface for design and assembly of polycubes structures. It can be also launched [interactively](https://sulcgroup.github.io/DNA3Dpolycubes/)
+The polycubes web application is a graphic user interface for design and assembly of polycubes structures. 
 
 
 ## [Polycubes stochastic assembly (fast implementation)](polycubes_cpp/)
