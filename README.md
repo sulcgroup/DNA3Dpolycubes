@@ -1,5 +1,5 @@
 # DNA3Dpolycubes
-A repository accompanying a manuscript *Universal 3D Nanoscale Assembly with DNA Polycubes*. It contains software tools that are used in the manuscript for design and simulation-driven validation of polycube self-assembled polycube finite-sized as well crystal structures and their subsequent export to DNA strands for experimental realization.  
+A repository accompanying a manuscript *Universal 3D Nanoscale Assembly Using a Minimal DNA Polycube Toolkit*. It contains software tools that are used in the manuscript for design and simulation-driven validation of polycube self-assembled polycube finite-sized as well crystal structures and their subsequent export to DNA strands for experimental realization.  
 
 
 ## [Sequence design algorithm](SEdesign/)
